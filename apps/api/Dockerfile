@@ -12,7 +12,7 @@ RUN npm install -g turbo
 COPY . .
 
 # Prune the workspace for the api app
-RUN turbo prune --scope=@25th-july/api --docker
+RUN turbo prune @25th-july/api --docker
 
 # --- Next stage ---
 FROM node:20-alpine AS installer
@@ -26,6 +26,7 @@ RUN npm ci
 
 # Copy the rest of the pruned source code
 COPY --from=builder /app/out/full/ .
+COPY --from=builder /app/tsconfig.base.json ./tsconfig.base.json
 
 # Generate Prisma Client
 RUN cd packages/db && npx prisma generate
