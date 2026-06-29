@@ -1,0 +1,250 @@
+// ============================================
+// Project "25th July" — Database Schema
+// SRS Section 6 — Full Implementation
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── 6.1 Users ────────────────────────────────
+model User {
+  id               String    @id @default(uuid()) @db.Uuid
+  email            String    @unique
+  passwordHash     String    @map("password_hash")
+  publicKey        String?   @map("public_key")       // X25519 public key (Base64)
+  identityKey      String?   @map("identity_key")     // Ed25519 public key (Base64)
+  displayName      String    @map("display_name")
+  avatarUrl        String?   @map("avatar_url")       // URL to encrypted avatar blob
+  role             UserRole  @default(PARTNER)
+  createdAt        DateTime  @default(now()) @map("created_at")
+  emailVerifiedAt  DateTime? @map("email_verified_at")
+
+  // Relations
+  devices          Device[]
+  sessions         Session[]
+  sentMessages     Message[]        @relation("SentMessages")
+  reactions        Reaction[]
+  pinnedMessages   PinnedMessage[]
+  auditLogs        AuditLog[]
+  passkeys         Passkey[]
+  pushSubscriptions PushSubscription[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  OWNER
+  PARTNER
+}
+
+// ── 6.2 Devices ──────────────────────────────
+model Device {
+  id              String    @id @default(uuid()) @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  name            String    // User-assigned device name
+  fingerprintHash String    @map("fingerprint_hash")   // HMAC-SHA256
+  browser         String?
+  os              String?
+  trusted         Boolean   @default(false)
+  approvalToken   String?   @map("approval_token")     // Single-use approval token
+  approvalExpires DateTime? @map("approval_expires")
+  deviceSecret    String?   @map("device_secret")      // Random 256-bit value
+  lastLogin       DateTime? @map("last_login")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions        Session[]
+  auditLogs       AuditLog[]
+
+  @@map("devices")
+}
+
+// ── 6.3 Sessions ─────────────────────────────
+model Session {
+  id                String   @id @default(uuid()) @db.Uuid
+  userId            String   @map("user_id") @db.Uuid
+  refreshTokenHash  String   @map("refresh_token_hash") // SHA-256 hash
+  deviceId          String?  @map("device_id") @db.Uuid
+  ipMasked          String?  @map("ip_masked")           // First 3 octets
+  userAgent         String?  @map("user_agent")
+  expiresAt         DateTime @map("expires_at")
+  lastUsedAt        DateTime @default(now()) @map("last_used_at")
+  revoked           Boolean  @default(false)
+
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device            Device?  @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([refreshTokenHash])
+  @@map("sessions")
+}
+
+// ── 6.4 Messages ─────────────────────────────
+model Message {
+  id                    String    @id @default(uuid()) @db.Uuid
+  senderId              String    @map("sender_id") @db.Uuid
+  encryptedContent      String    @map("encrypted_content")           // AES-256-GCM ciphertext (Base64)
+  encryptedKeySender    String    @map("encrypted_key_sender")        // Message key encrypted with sender's public key
+  encryptedKeyRecipient String    @map("encrypted_key_recipient")     // Message key encrypted with recipient's public key
+  iv                    String                                         // Initialization vector (Base64)
+  signature             String                                         // Ed25519 signature (Base64)
+  replyToId             String?   @map("reply_to_id") @db.Uuid
+  edited                Boolean   @default(false)
+  createdAt             DateTime  @default(now()) @map("created_at")
+  deliveredAt           DateTime? @map("delivered_at")
+  readAt                DateTime? @map("read_at")
+
+  // Relations
+  sender                User      @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  replyTo               Message?  @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies               Message[] @relation("MessageReplies")
+  media                 Media[]
+  reactions             Reaction[]
+  pinnedMessage         PinnedMessage?
+
+  @@index([senderId])
+  @@index([createdAt])
+  @@index([replyToId])
+  @@map("messages")
+}
+
+// ── 6.5 Media ────────────────────────────────
+model Media {
+  id                    String    @id @default(uuid()) @db.Uuid
+  messageId             String    @map("message_id") @db.Uuid
+  encryptedBlobUrl      String    @map("encrypted_blob_url")          // Filesystem path
+  encryptedKeySender    String    @map("encrypted_key_sender")
+  encryptedKeyRecipient String    @map("encrypted_key_recipient")
+  iv                    String                                         // Initialization vector (Base64)
+  type                  MediaType
+  mimeType              String    @map("mime_type")
+  sizeBytes             BigInt    @map("size_bytes")
+  originalName          String?   @map("original_name")               // Sanitised original filename
+  uploadedAt            DateTime  @default(now()) @map("uploaded_at")
+  expiresAt             DateTime  @map("expires_at")                  // NOW() + 7 days
+  expired               Boolean   @default(false)                     // Set true when blob is deleted
+
+  // Relations
+  message               Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+  @@index([expiresAt])
+  @@index([type])
+  @@map("media")
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  VOICE
+  DOCUMENT
+}
+
+// ── 6.6 Reactions ────────────────────────────
+model Reaction {
+  id        String   @id @default(uuid()) @db.Uuid
+  messageId String   @map("message_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  emoji     String   // Unicode emoji character
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId]) // One reaction per user per message
+  @@map("reactions")
+}
+
+// ── 6.7 Pinned Messages ─────────────────────
+model PinnedMessage {
+  id        String   @id @default(uuid()) @db.Uuid
+  messageId String   @unique @map("message_id") @db.Uuid
+  pinnedBy  String   @map("pinned_by") @db.Uuid
+  pinnedAt  DateTime @default(now()) @map("pinned_at")
+
+  // Relations
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [pinnedBy], references: [id], onDelete: Cascade)
+
+  @@map("pinned_messages")
+}
+
+// ── 6.8 Audit Log ───────────────────────────
+model AuditLog {
+  id        String        @id @default(uuid()) @db.Uuid
+  userId    String        @map("user_id") @db.Uuid
+  eventType AuditEventType @map("event_type")
+  ipMasked  String?       @map("ip_masked")
+  deviceId  String?       @map("device_id") @db.Uuid
+  metadata  Json?         // Event-specific details, NO sensitive data
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device    Device?       @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+enum AuditEventType {
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+  PASSWORD_CHANGE
+  PASSKEY_REGISTERED
+  PASSKEY_REMOVED
+  DEVICE_REGISTERED
+  DEVICE_APPROVED
+  DEVICE_REVOKED
+  SESSION_TERMINATED
+  FORCE_LOGOUT
+  EMAIL_CHANGED
+}
+
+// ── Passkeys (WebAuthn) ─────────────────────
+model Passkey {
+  id                  String   @id @default(uuid()) @db.Uuid
+  userId              String   @map("user_id") @db.Uuid
+  credentialId        String   @unique @map("credential_id")  // Base64URL
+  publicKey           String   @map("public_key")             // Base64URL
+  counter             BigInt   @default(0)
+  deviceType          String?  @map("device_type")            // platform or cross-platform
+  backedUp            Boolean  @default(false)
+  transports          String[] // e.g. ["internal", "usb", "ble", "nfc"]
+  name                String   // User-assigned name
+  createdAt           DateTime @default(now()) @map("created_at")
+  lastUsedAt          DateTime? @map("last_used_at")
+
+  // Relations
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("passkeys")
+}
+
+// ── Push Subscriptions ──────────────────────
+model PushSubscription {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscriptions")
+}

@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - web
+      - api
+    restart: unless-stopped
+    networks:
+      - haven-network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://25th-july.developedbybasit.me/api
+    restart: unless-stopped
+    networks:
+      - haven-network
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/haven_prod?schema=public
+      - REDIS_URL=redis://redis:6379
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - APP_URL=https://25th-july.developedbybasit.me
+      - MEDIA_STORAGE_PATH=/app/media
+    volumes:
+      - haven_media:/app/media
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    networks:
+      - haven-network
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=haven_prod
+    volumes:
+      - haven_db:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - haven-network
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - haven_redis:/data
+    restart: unless-stopped
+    networks:
+      - haven-network
+
+volumes:
+  haven_db:
+  haven_redis:
+  haven_media:
+
+networks:
+  haven-network:
+    driver: bridge
