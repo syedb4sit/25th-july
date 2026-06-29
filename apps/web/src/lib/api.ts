@@ -15,7 +15,7 @@ const BASE_URL: string = process.env.NEXT_PUBLIC_API_URL || '';
 
 async function getAccessToken(): Promise<string | null> {
   try {
-    const { useAuthStore } = await import('@/stores/auth');
+    const { useAuthStore } = await import('@/stores/auth.store');
     return useAuthStore.getState().accessToken;
   } catch {
     return null;
@@ -24,7 +24,7 @@ async function getAccessToken(): Promise<string | null> {
 
 async function refreshAccessToken(): Promise<string | null> {
   try {
-    const { useAuthStore } = await import('@/stores/auth');
+    const { useAuthStore } = await import('@/stores/auth.store');
     const store = useAuthStore.getState();
     if (typeof store.refreshToken === 'function') {
       await store.refreshToken();
