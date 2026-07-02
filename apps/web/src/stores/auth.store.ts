@@ -36,7 +36,7 @@ interface AuthState {
 
 let refreshTimerId: ReturnType<typeof setInterval> | null = null;
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
+const API_BASE = process.env['NEXT_PUBLIC_API_URL'] ?? '';
 
 const REFRESH_INTERVAL_MS = 780_000; // 13 minutes
 

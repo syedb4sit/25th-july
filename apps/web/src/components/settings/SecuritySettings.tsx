@@ -14,7 +14,7 @@ export function SecuritySettings() {
 
   const fetchPasskeys = async () => {
     try {
-      const data = await api.get('/passkeys');
+      const data = await api.get<any[]>('/passkeys');
       setPasskeys(data);
     } catch (err) {
       console.error(err);

@@ -14,7 +14,7 @@ export function SessionManager() {
 
   const fetchSessions = async () => {
     try {
-      const data = await api.get('/sessions');
+      const data = await api.get<any[]>('/sessions');
       setSessions(data);
     } catch (err) {
       console.error(err);

@@ -86,7 +86,7 @@ let wsClient: WebSocketClient | null = null;
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function deriveWsUrl(): string {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = process.env['NEXT_PUBLIC_API_URL'];
 
   if (apiUrl) {
     const url = new URL(apiUrl);
@@ -153,7 +153,7 @@ export function useWebSocket(): UseWebSocketReturn {
     if (wsClient) return;
 
     const wsUrl = deriveWsUrl();
-    wsClient = new WebSocketClient(wsUrl, accessToken);
+    wsClient = new WebSocketClient();
 
     wsClient.on('connection:state', (state: ConnectionState) => {
       setConnectionState(state);
@@ -227,7 +227,7 @@ export function useWebSocket(): UseWebSocketReturn {
       logout();
     });
 
-    wsClient.connect();
+    wsClient.connect(wsUrl, accessToken);
 
     return () => {
       if (wsClient) {

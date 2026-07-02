@@ -2,6 +2,7 @@
 // Shared Types — Message
 // ============================================
 
+import { MediaInfo } from './media';
 export interface EncryptedMessage {
   id: string;
   senderId: string;

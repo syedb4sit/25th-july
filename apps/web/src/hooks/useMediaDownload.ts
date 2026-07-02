@@ -93,7 +93,8 @@ export function useMediaDownload(): UseMediaDownloadReturn {
       if (mediaInfos.length === 0) return;
 
       if (mediaInfos.length === 1) {
-        await downloadSingle(mediaInfos[0]);
+        const first = mediaInfos[0];
+        if (first) await downloadSingle(first);
         return;
       }
 
@@ -110,6 +111,7 @@ export function useMediaDownload(): UseMediaDownloadReturn {
 
         for (let i = 0; i < total; i++) {
           const mediaInfo = mediaInfos[i];
+          if (!mediaInfo) continue;
           const fileName = getFileName(mediaInfo);
           setCurrentFile(fileName);
 

@@ -14,7 +14,7 @@ export function DeviceManager() {
 
   const fetchDevices = async () => {
     try {
-      const data = await api.get('/devices');
+      const data = await api.get<any[]>('/devices');
       setDevices(data);
     } catch (err) {
       console.error(err);
@@ -56,8 +56,8 @@ export function DeviceManager() {
                 <div>
                   <h4 className="text-sm font-bold text-haven-text flex items-center gap-2">
                     {device.name}
-                    {device.trusted && <ShieldCheck className="w-3.5 h-3.5 text-haven-success" title="Trusted" />}
-                    {!device.trusted && <AlertCircle className="w-3.5 h-3.5 text-yellow-500" title="Awaiting Approval" />}
+                    {device.trusted && <span title="Trusted"><ShieldCheck className="w-3.5 h-3.5 text-haven-success" /></span>}
+                    {!device.trusted && <span title="Awaiting Approval"><AlertCircle className="w-3.5 h-3.5 text-yellow-500" /></span>}
                   </h4>
                   <p className="text-xs text-haven-text-secondary mt-1">
                     Added {formatDistanceToNow(new Date(device.createdAt))} ago

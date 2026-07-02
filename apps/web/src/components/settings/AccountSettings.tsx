@@ -16,7 +16,7 @@ export function AccountSettings() {
     setIsLoading(true);
     setMessage('');
     try {
-      const res = await api.put('/settings/profile', { displayName });
+      const res = await api.put<{ displayName: string }>('/settings/profile', { displayName });
       setUser({ ...user!, displayName: res.displayName });
       setMessage('Profile updated successfully.');
     } catch (err: any) {
@@ -55,7 +55,7 @@ export function AccountSettings() {
         
         <Input 
           label="Email Address" 
-          value={user?.email} 
+          value={''} 
           disabled 
         />
 

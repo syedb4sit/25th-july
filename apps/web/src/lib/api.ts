@@ -11,7 +11,7 @@ export class ApiError extends Error {
   }
 }
 
-const BASE_URL: string = process.env.NEXT_PUBLIC_API_URL || '';
+const BASE_URL: string = process.env['NEXT_PUBLIC_API_URL'] || '';
 
 async function getAccessToken(): Promise<string | null> {
   try {
