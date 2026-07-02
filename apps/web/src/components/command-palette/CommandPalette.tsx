@@ -25,14 +25,15 @@ export function CommandPalette() {
 
   if (!isCommandPaletteOpen) return null;
 
-  const filters = [
+  type Filter = { id: 'ALL' | 'MESSAGES' | 'IMAGES' | 'VIDEOS' | 'VOICE' | 'DOCUMENTS'; label: string; icon?: React.ElementType };
+  const filters: Filter[] = [
     { id: 'ALL', label: 'All' },
     { id: 'MESSAGES', label: 'Messages', icon: MessageSquare },
     { id: 'IMAGES', label: 'Images', icon: ImageIcon },
     { id: 'VIDEOS', label: 'Videos', icon: Video },
     { id: 'VOICE', label: 'Voice Notes', icon: Mic },
     { id: 'DOCUMENTS', label: 'Documents', icon: FileText },
-  ] as const;
+  ];
 
   return (
     <AnimatePresence>
