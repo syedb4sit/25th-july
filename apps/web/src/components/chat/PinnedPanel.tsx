@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { PinOff } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -43,3 +44,4 @@ export function PinnedPanel() {
     </div>
   );
 }
+

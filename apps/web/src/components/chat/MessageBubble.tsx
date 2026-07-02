@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
@@ -90,3 +91,4 @@ export function MessageBubble({ message, isSender }: { message: any; isSender: b
     </motion.div>
   );
 }
+

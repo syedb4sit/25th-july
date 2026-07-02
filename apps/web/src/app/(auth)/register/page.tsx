@@ -1,3 +1,4 @@
+'use client';
 "use Masonry"; // Hack to bypass SSR for now? No, just "use client"
 "use client";
 
@@ -131,3 +132,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+

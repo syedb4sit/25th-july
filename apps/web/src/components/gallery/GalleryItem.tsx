@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { useUIStore } from '@/stores/ui.store';
 import { Check, Download, Image as ImageIcon, Video, Mic, FileText, AlertCircle } from 'lucide-react';
@@ -86,3 +87,4 @@ export function GalleryItem({ item, isSelectMode }: GalleryItemProps) {
     </motion.div>
   );
 }
+

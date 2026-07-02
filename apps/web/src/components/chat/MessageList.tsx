@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useRef } from 'react';
 import { useMessageStore } from '@/stores/message.store';
 import { MessageBubble } from './MessageBubble';
@@ -76,3 +77,4 @@ export function MessageList() {
     </div>
   );
 }
+

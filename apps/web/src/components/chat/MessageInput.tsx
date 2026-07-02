@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import { Paperclip, Send, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -85,3 +86,4 @@ export function MessageInput({ onSendMessage }: { onSendMessage?: (text: string)
     </div>
   );
 }
+

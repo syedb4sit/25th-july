@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUIStore } from '@/stores/ui.store';
@@ -107,3 +108,4 @@ export function CommandPalette() {
     </AnimatePresence>
   );
 }
+

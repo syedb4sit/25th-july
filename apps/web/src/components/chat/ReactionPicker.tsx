@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
@@ -51,3 +52,4 @@ export function ReactionPicker({ messageId, onClose, isSender }: ReactionPickerP
     </motion.div>
   );
 }
+

@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/stores/auth.store';
@@ -107,3 +108,4 @@ export function Sidebar() {
     </motion.aside>
   );
 }
+

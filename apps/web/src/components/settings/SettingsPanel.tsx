@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { User, Shield, Smartphone, Activity, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -67,3 +68,4 @@ export function SettingsPanel() {
     </div>
   );
 }
+

@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { Button } from '../ui/Button';
 import { Download, CheckSquare, Square } from 'lucide-react';
@@ -83,3 +84,4 @@ export function GalleryToolbar({
     </div>
   );
 }
+

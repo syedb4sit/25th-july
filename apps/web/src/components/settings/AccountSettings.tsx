@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { useAuthStore } from '@/stores/auth.store';
 import { Input } from '../ui/Input';
@@ -72,3 +73,4 @@ export function AccountSettings() {
     </div>
   );
 }
+

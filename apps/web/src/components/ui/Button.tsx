@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -52,3 +53,4 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 Button.displayName = 'Button';
+

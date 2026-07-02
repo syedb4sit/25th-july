@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { useUIStore } from '@/stores/ui.store';
 import { GalleryToolbar } from './GalleryToolbar';
@@ -39,3 +40,4 @@ export function MediaGallery() {
     </div>
   );
 }
+
