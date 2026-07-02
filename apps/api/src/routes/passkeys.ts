@@ -12,9 +12,9 @@ import { prisma } from '../lib/db';
 import { authService } from '../services/auth.service';
 import { UserRole } from '@25th-july/types';
 
-const rpName = process.env.WEBAUTHN_RP_NAME || '25th July';
-const rpID = process.env.WEBAUTHN_RP_ID || 'localhost';
-const origin = process.env.WEBAUTHN_ORIGIN || 'http://localhost:3000';
+const rpName = process.env['WEBAUTHN_RP_NAME'] || '25th July';
+const rpID = process.env['WEBAUTHN_RP_ID'] || 'localhost';
+const origin = process.env['WEBAUTHN_ORIGIN'] || 'http://localhost:3000';
 
 // In-memory store for challenges (use Redis in prod)
 const currentChallenges: Record<string, string> = {};
@@ -33,7 +33,7 @@ const passkeysRoutes: FastifyPluginAsync = async (fastify) => {
       userID: user.id,
       userName: user.email,
       attestationType: 'none',
-      excludeCredentials: user.passkeys.map(pk => ({
+      excludeCredentials: user.passkeys.map((pk: any) => ({
         id: pk.credentialId,
         type: 'public-key',
       })),
@@ -96,7 +96,7 @@ const passkeysRoutes: FastifyPluginAsync = async (fastify) => {
 
     const options = await generateAuthenticationOptions({
       rpID,
-      allowCredentials: user.passkeys.map(pk => ({
+      allowCredentials: user.passkeys.map((pk: any) => ({
         id: Buffer.from(pk.credentialId, 'base64'),
         type: 'public-key',
         transports: pk.transports as any,
@@ -121,7 +121,7 @@ const passkeysRoutes: FastifyPluginAsync = async (fastify) => {
       return reply.status(400).send({ error: 'Invalid state' });
     }
 
-    const passkey = user.passkeys.find(pk => pk.credentialId === response.id);
+    const passkey = user.passkeys.find((pk: any) => pk.credentialId === response.id);
     if (!passkey) {
       return reply.status(400).send({ error: 'Passkey not found' });
     }
@@ -165,7 +165,7 @@ const passkeysRoutes: FastifyPluginAsync = async (fastify) => {
 
         reply.setCookie('refreshToken', refreshToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: process.env['NODE_ENV'] === 'production',
           sameSite: 'strict',
           path: '/api/auth',
           maxAge: 30 * 24 * 60 * 60,
@@ -206,3 +206,4 @@ const passkeysRoutes: FastifyPluginAsync = async (fastify) => {
 };
 
 export default passkeysRoutes;
+

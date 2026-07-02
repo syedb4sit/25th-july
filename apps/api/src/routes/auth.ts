@@ -46,7 +46,7 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
       
       reply.setCookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env['NODE_ENV'] === 'production',
         sameSite: 'strict',
         path: '/api/auth',
         maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -81,7 +81,7 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
       
       reply.setCookie('refreshToken', newRefreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env['NODE_ENV'] === 'production',
         sameSite: 'strict',
         path: '/api/auth',
         maxAge: 30 * 24 * 60 * 60,
@@ -124,3 +124,4 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 };
 
 export default authRoutes;
+

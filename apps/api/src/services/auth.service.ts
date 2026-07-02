@@ -6,7 +6,7 @@ import { emailService } from './email.service';
 import { auditService } from './audit.service';
 import { UserRole } from '@25th-july/types';
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback_secret_for_dev';
+const JWT_ACCESS_SECRET = process.env['JWT_ACCESS_SECRET'] || 'fallback_secret_for_dev';
 
 export const authService = {
   async registerUser(email: string, passwordHash: string, displayName: string, ipMasked?: string) {
@@ -153,3 +153,4 @@ export const authService = {
     return 'hidden';
   }
 };
+

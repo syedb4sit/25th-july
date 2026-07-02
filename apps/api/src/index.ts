@@ -22,13 +22,13 @@ import settingsRoutes from './routes/settings';
 
 import { setupWebSocketServer } from './websocket/server';
 
-const app = fastify({ logger });
+const app = fastify({ logger: logger as any });
 
 const start = async () => {
   try {
     // Basic plugins
     await app.register(cors, {
-      origin: process.env.APP_URL || 'http://localhost:3000',
+      origin: process.env['APP_URL'] || 'http://localhost:3000',
       credentials: true,
     });
     await app.register(helmet);
@@ -53,20 +53,20 @@ const start = async () => {
     await app.register(settingsRoutes, { prefix: '/api/settings' });
 
     // WebSocket Server
-    setupWebSocketServer(app);
+    setupWebSocketServer(app as any);
 
     // Cron Jobs
     // None currently configured
 
     // Serve static files in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env['NODE_ENV'] === 'production') {
       await app.register(fastifyStatic, {
         root: path.join(__dirname, '../../web/.next'),
         prefix: '/',
       });
     }
 
-    const port = parseInt(process.env.PORT || '3001', 10);
+    const port = parseInt(process.env['PORT'] || '3001', 10);
     await app.listen({ port, host: '0.0.0.0' });
     
     app.log.info(`Server listening on port ${port}`);
@@ -77,3 +77,4 @@ const start = async () => {
 };
 
 start();
+

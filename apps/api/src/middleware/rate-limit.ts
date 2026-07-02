@@ -4,7 +4,7 @@ import fastifyRateLimit from '@fastify/rate-limit';
 import { redis } from '../lib/redis';
 
 const rateLimiter: FastifyPluginAsync = async (fastify) => {
-  const isEnabled = process.env.RATE_LIMIT_ENABLED === 'true';
+  const isEnabled = process.env['RATE_LIMIT_ENABLED'] === 'true';
 
   if (!isEnabled) {
     fastify.log.warn('Rate limiting is DISABLED via env variables');
@@ -37,3 +37,4 @@ export const rateLimits = {
   media: { max: 20, timeWindow: '1 minute' },
   general: { max: 300, timeWindow: '1 minute' },
 };
+

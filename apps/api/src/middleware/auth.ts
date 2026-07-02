@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import jwt from 'jsonwebtoken';
 import { UserRole } from '@25th-july/types';
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback_secret_for_dev';
+const JWT_ACCESS_SECRET = process.env['JWT_ACCESS_SECRET'] || 'fallback_secret_for_dev';
 
 export interface TokenPayload {
   userId: string;
@@ -40,3 +40,4 @@ export const verifyToken = async (request: FastifyRequest, reply: FastifyReply) 
     return reply.status(401).send({ error: 'Unauthorized: Invalid token' });
   }
 };
+

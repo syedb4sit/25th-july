@@ -15,7 +15,7 @@ export const messageService = {
       },
     });
 
-    return messages.map(msg => ({
+    return messages.map((msg: any) => ({
       ...msg,
       isPinned: !!msg.pinnedMessage,
     }));
@@ -34,7 +34,7 @@ export const messageService = {
       orderBy: { pinnedAt: 'desc' }
     });
 
-    return pinned.map(p => ({
+    return pinned.map((p: any) => ({
       ...p.message,
       isPinned: true,
     }));

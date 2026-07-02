@@ -3,7 +3,7 @@ import { MediaUploadPayload, MediaType } from '@25th-july/types';
 import fs from 'fs/promises';
 import path from 'path';
 
-const MEDIA_STORAGE_PATH = process.env.MEDIA_STORAGE_PATH || './data/media';
+const MEDIA_STORAGE_PATH = process.env['MEDIA_STORAGE_PATH'] || './data/media';
 
 export const mediaService = {
   async uploadMedia(payload: MediaUploadPayload, blobStream: AsyncIterable<Buffer>) {
@@ -71,3 +71,4 @@ export const mediaService = {
     };
   }
 };
+

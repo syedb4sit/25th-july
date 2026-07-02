@@ -1,8 +1,8 @@
 import { Resend } from 'resend';
 import { logger } from '../lib/logger';
 
-const resendApiKey = process.env.RESEND_API_KEY;
-const emailFrom = process.env.EMAIL_FROM || 'noreply@developedbybasit.me';
+const resendApiKey = process.env['RESEND_API_KEY'];
+const emailFrom = process.env['EMAIL_FROM'] || 'noreply@developedbybasit.me';
 
 let resend: Resend | null = null;
 if (resendApiKey) {
@@ -13,7 +13,7 @@ if (resendApiKey) {
 
 export const emailService = {
   async sendVerificationEmail(email: string, token: string) {
-    const link = `${process.env.APP_URL}/verify-email?token=${token}`;
+    const link = `${process.env['APP_URL']}/verify-email?token=${token}`;
     const subject = 'Verify your email - 25th July';
     const html = `
       <h1>Welcome to 25th July</h1>
@@ -26,7 +26,7 @@ export const emailService = {
   },
 
   async sendPasswordResetEmail(email: string, token: string) {
-    const link = `${process.env.APP_URL}/reset-password?token=${token}`;
+    const link = `${process.env['APP_URL']}/reset-password?token=${token}`;
     const subject = 'Reset your password - 25th July';
     const html = `
       <h1>Password Reset Request</h1>
@@ -39,7 +39,7 @@ export const emailService = {
   },
 
   async sendDeviceApprovalEmail(email: string, deviceInfo: any, token: string) {
-    const link = `${process.env.APP_URL}/approve-device?token=${token}`;
+    const link = `${process.env['APP_URL']}/approve-device?token=${token}`;
     const subject = 'New Device Login Attempt - 25th July';
     const html = `
       <h1>New Device Login Request</h1>
@@ -78,3 +78,4 @@ export const emailService = {
     }
   }
 };
+

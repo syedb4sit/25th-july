@@ -1,9 +1,9 @@
-import { WebSocketEvent } from '@25th-july/types';
+
 import { messageService } from '../services/message.service';
 import { broadcastToPartner, connectedClients } from './server';
 import { prisma } from '../lib/db';
 
-export const handleWebSocketMessage = async (userId: string, event: WebSocketEvent) => {
+export const handleWebSocketMessage = async (userId: string, event: any) => {
   switch (event.type) {
     case 'message:send':
       const message = await messageService.createMessage(userId, event.payload);

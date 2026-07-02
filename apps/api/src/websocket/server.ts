@@ -6,7 +6,7 @@ import { logger } from '../lib/logger';
 import { handleWebSocketMessage } from './handlers';
 import { redis } from '../lib/redis';
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback_secret_for_dev';
+const JWT_ACCESS_SECRET = process.env['JWT_ACCESS_SECRET'] || 'fallback_secret_for_dev';
 
 export const connectedClients = new Map<string, WebSocket>();
 
@@ -76,3 +76,4 @@ export const broadcastToPartner = async (senderId: string, event: any) => {
     }
   }
 };
+
