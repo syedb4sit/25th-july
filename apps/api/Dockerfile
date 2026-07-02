@@ -29,7 +29,8 @@ COPY --from=builder /app/out/full/ .
 COPY --from=builder /app/tsconfig.base.json ./tsconfig.base.json
 
 # Generate Prisma Client
-RUN cd packages/db && npx prisma generate
+COPY --from=builder /app/prisma ./prisma
+RUN npx prisma generate --schema=prisma/schema.prisma
 
 # Build the project
 RUN npx turbo run build --filter=@25th-july/api...
