@@ -70,6 +70,7 @@ const passkeysRoutes: FastifyPluginAsync = async (fastify) => {
             publicKey: Buffer.from(credentialPublicKey).toString('base64'),
             counter,
             transports: body.response.transports || [],
+            name: "Passkey"
           }
         });
 
@@ -135,14 +136,14 @@ const passkeysRoutes: FastifyPluginAsync = async (fastify) => {
         authenticator: {
           credentialID: Buffer.from(passkey.credentialId, 'base64'),
           credentialPublicKey: Buffer.from(passkey.publicKey, 'base64'),
-          counter: passkey.counter,
+          counter: Number(passkey.counter),
         }
       });
 
       if (verification.verified) {
         await prisma.passkey.update({
           where: { id: passkey.id },
-          data: { counter: verification.authenticationInfo.newCounter }
+          data: { counter: BigInt(verification.authenticationInfo.newCounter) }
         });
         delete currentChallenges[userId];
 

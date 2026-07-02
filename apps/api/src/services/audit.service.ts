@@ -1,11 +1,12 @@
 import { prisma } from '../lib/db';
 import { logger } from '../lib/logger';
+import { AuditEventType } from '@prisma/client';
 
 
 export const auditService = {
   async logEvent(
     userId: string,
-    eventType: string,
+    eventType: AuditEventType,
     ipMasked?: string | null,
     deviceId?: string | null,
     metadata?: any

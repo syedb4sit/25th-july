@@ -26,16 +26,15 @@ export const handleWebSocketMessage = async (userId: string, event: any) => {
     case 'message:reaction':
       await prisma.reaction.upsert({
         where: {
-          messageId_userId_reaction: {
+          messageId_userId: {
             messageId: event.payload.messageId,
             userId,
-            reaction: event.payload.reaction
           }
         },
         create: {
           messageId: event.payload.messageId,
           userId,
-          reaction: event.payload.reaction
+          emoji: event.payload.reaction
         },
         update: {}
       });
