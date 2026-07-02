@@ -22,7 +22,7 @@
     "@simplewebauthn/server": "^9.0.1",
     "@25th-july/types": "*",
     "@25th-july/encryption": "*",
-    "@25th-july/db": "*",
+
     "argon2": "^0.40.1",
     "dotenv": "^16.4.5",
     "fastify": "^4.26.2",
