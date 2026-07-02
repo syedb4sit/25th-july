@@ -3,11 +3,12 @@ import { Avatar } from '../ui/Avatar';
 import { Search, Pin, Menu } from 'lucide-react';
 import { useUIStore } from '@/stores/ui.store';
 import { usePresence } from '@/hooks/usePresence';
-import { formatDistanceToNow } from 'date-fns';
+
 
 export function ChatHeader() {
   const { toggleSidebar, activeView, setActiveView } = useUIStore();
-  const { isPartnerOnline, lastSeen } = usePresence();
+  const { partnerPresence, formatLastSeen } = usePresence();
+  const { online: isPartnerOnline } = partnerPresence;
 
   return (
     <header className="h-16 border-b border-haven-border bg-haven-surface flex items-center justify-between px-4 z-10">
@@ -23,7 +24,7 @@ export function ChatHeader() {
         <div className="flex flex-col">
           <h2 className="text-sm font-semibold text-haven-text">Partner</h2>
           <span className="text-xs text-haven-text-secondary">
-            {isPartnerOnline ? 'Online' : lastSeen ? `Last seen ${formatDistanceToNow(new Date(lastSeen))} ago` : 'Offline'}
+            {formatLastSeen()}
           </span>
         </div>
       </div>
