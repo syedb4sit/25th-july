@@ -4,7 +4,7 @@ import helmet from '@fastify/helmet';
 import cookie from '@fastify/cookie';
 import multipart from '@fastify/multipart';
 import websocket from '@fastify/websocket';
-import fastifyStatic from '@fastify/static';
+
 import path from 'path';
 
 import { logger } from './lib/logger';
@@ -58,13 +58,6 @@ const start = async () => {
     // Cron Jobs
     // None currently configured
 
-    // Serve static files in production
-    if (process.env['NODE_ENV'] === 'production') {
-      await app.register(fastifyStatic, {
-        root: path.join(__dirname, '../../web/.next'),
-        prefix: '/',
-      });
-    }
 
     const port = parseInt(process.env['PORT'] || '3001', 10);
     await app.listen({ port, host: '0.0.0.0' });
