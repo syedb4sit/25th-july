@@ -5,12 +5,12 @@ import { useUIStore } from '@/stores/ui.store';
 import { Avatar } from '../ui/Avatar';
 import { MessageSquare, Image as ImageIcon, Pin, Settings, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePresence } from '@/hooks/usePresence';
-import { formatDistanceToNow } from 'date-fns';
+
 
 export function Sidebar() {
   const { user, logout } = useAuthStore();
   const { isSidebarOpen, toggleSidebar, activeView, setActiveView } = useUIStore();
-  const { isPartnerOnline, lastSeen } = usePresence();
+  const { partnerPresence: { online: isPartnerOnline }, formatLastSeen } = usePresence();
 
   const navItems = [
     { id: 'chat', label: 'Chat', icon: MessageSquare },
@@ -81,7 +81,7 @@ export function Sidebar() {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-haven-text truncate">Partner</p>
               <p className="text-xs text-haven-text-secondary truncate">
-                {isPartnerOnline ? 'Online' : lastSeen ? `Last seen ${formatDistanceToNow(new Date(lastSeen))} ago` : 'Offline'}
+                {formatLastSeen()}
               </p>
             </div>
           </div>
