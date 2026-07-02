@@ -23,6 +23,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithPasskey: (email: string) => Promise<void>;
   register: (email: string, password: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshToken: () => Promise<void>;
@@ -112,6 +113,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       startRefreshInterval(get().refreshToken);
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
+    }
+  },
+
+  loginWithPasskey: async (email: string) => {
+    set({ isLoading: true });
+    try {
+      // Passkey implementation to be completed
+      throw new Error("Passkey login is not configured yet.");
     } catch (error) {
       set({ isLoading: false });
       throw error;
